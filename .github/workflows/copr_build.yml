@@ -43,11 +43,8 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE && bash build.sh
 
-    - name: List folder structure
-      run: tree
-
     - name: Upload SRPM package
       uses: actions/upload-artifact@v2
       with:
         name: geary-src-rpm
-        path: ${{ env.GITHUB_WORKSPACE }}/build/geary-*.src.rpm
+        path: build/geary-*.src.rpm
