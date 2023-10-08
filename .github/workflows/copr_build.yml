@@ -11,13 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clone geary repository
-      run: |
-        git clone https://gitlab.gnome.org/GNOME/geary.git
-        cd geary
-        echo "LATEST_GEARY_VERSION=44.$(git rev-list --count HEAD)~$(git log -1 --format=%h)" >> $GITHUB_ENV
-        echo "LATEST_GEARY_COMMIT=$(git log -1 --format=%h)" >> $GITHUB_ENV
-
     - name: Download information on previous build
       uses: actions/download-artifact@v2
       continue-on-error: true
@@ -25,8 +18,12 @@ jobs:
         name: geary_build_latest_commit_id
         path: geary_build_latest_commit_id
 
-    - name: Display structure of downloaded files
-      run: ls -R
+    - name: Clone geary repository
+      run: |
+        git clone https://gitlab.gnome.org/GNOME/geary.git
+        cd geary
+        echo "LATEST_GEARY_VERSION=44.$(git rev-list --count HEAD)~$(git log -1 --format=%h)" >> $GITHUB_ENV
+        echo "LATEST_GEARY_COMMIT=$(git log -1 --format=%h)" >> $GITHUB_ENV
 
     - name: Check if source RPM file exists
       run: |
