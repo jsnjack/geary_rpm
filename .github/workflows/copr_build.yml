@@ -24,6 +24,9 @@ jobs:
       with:
         name: geary_build_latest_commit_id
 
+    - name: Display structure of downloaded files
+      run: ls -R
+
     - name: Check if source RPM file exists
       run: |
         if test "${{ env.LATEST_GEARY_COMMIT }}" == "$(cat geary_build_latest_commit_id)"; then
