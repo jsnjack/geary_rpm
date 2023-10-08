@@ -27,8 +27,6 @@ podman build -t geary-build-image -f build/Containerfile .
 echo "Rendering copr auth file..."
 COPR_LOGIN=${COPR_LOGIN} COPR_TOKEN=${COPR_TOKEN} envsubst < copr.tpl > build/copr
 
-cat build/copr
-
 echo "Building rpm..."
 podman run \
     --name geary-builder \
@@ -38,5 +36,5 @@ podman run \
     localhost/geary-build-image:latest \
     bash -c "tail -f /dev/null"
 podman exec geary-builder bash -c "rpmbuild -bs /root/rpmbuild/SPECS/geary.spec"
-podman exec geary-builder bash -c "find -name \"geary-*.src.rpm\" /root/rpmbuild/SRPMS/ | xargs -t -I % copr-cli build geary %"
+podman exec geary-builder bash -c "ls /root/rpmbuild/SRPMS/geary-*.src.rpm | xargs -t -I % copr-cli build geary %"
 podman kill --signal=SIGKILL geary-builder
