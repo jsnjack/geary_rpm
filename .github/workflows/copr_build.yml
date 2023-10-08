@@ -16,18 +16,18 @@ jobs:
         git clone https://gitlab.gnome.org/GNOME/geary.git
         cd geary
         echo "LATEST_GEARY_VERSION=44.$(git rev-list --count HEAD)~$(git log -1 --format=%h)" >> $GITHUB_ENV
+        echo "LATEST_GEARY_COMMIT=$(git log -1 --format=%h)" >> $GITHUB_ENV
 
-    - name: Download previous artifact
+    - name: Download information on previous build
       uses: actions/download-artifact@v2
       continue-on-error: true
       with:
-        name: geary-src-rpm
-        path: build/
+        name: geary_build_latest_commit_id
 
     - name: Check if source RPM file exists
       run: |
-        if test -f "build/geary-${{ env.LATEST_GEARY_VERSION }}-1.fc38.src.rpm"; then
-          echo "Source RPM file already exists, skipping build"
+        if test "${{ env.LATEST_GEARY_COMMIT }}" == "$(cat geary_build_latest_commit_id)"; then
+          echo "geary version $LAST_GEARY_COMMIT is already built. Skipping build."
           exit 0
         fi
 
@@ -43,8 +43,12 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE && bash build.sh
 
+    - name: Write commit id
+      run: |
+        echo "${{ env.LATEST_GEARY_COMMIT }}" > geary_build_commit_id
+
     - name: Upload SRPM package
       uses: actions/upload-artifact@v2
       with:
-        name: geary-src-rpm
-        path: build/geary-*.src.rpm
+        name: geary_build_latest_commit_id
+        path: geary_build_commit_id
