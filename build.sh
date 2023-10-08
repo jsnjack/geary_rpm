@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ensure safe execution
+set -euo pipefail
+
 echo "Building the project"
 echo "===================="
 
@@ -28,7 +31,7 @@ podman run \
     -v $(pwd)/build/geary-${VERSION}.zip:/root/rpmbuild/SOURCES/geary-${VERSION}.zip \
     -e VERSION=${VERSION} \
     localhost/geary-build-image:latest \
-    rpmbuild -ba /root/rpmbuild/SPECS/geary.spec
-podman cp geary-builder:/root/rpmbuild/RPMS/x86_64/geary-${VERSION}-1.fc38.x86_64.rpm build/
+    rpmbuild -bs /root/rpmbuild/SPECS/geary.spec
+podman cp geary-builder:/root/rpmbuild/SRPMS/geary-${VERSION}-1.fc38.src.rpm build/
 podman stop --ignore geary-builder
 podman rm -f --ignore geary-builder

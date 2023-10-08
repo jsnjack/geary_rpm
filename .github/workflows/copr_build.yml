@@ -1,0 +1,49 @@
+name: Build RPM package
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch: # Add manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone geary repository
+      run: |
+        git clone https://gitlab.gnome.org/GNOME/geary.git
+        cd geary
+        echo "LATEST_GEARY_VERSION=44.$(git rev-list --count HEAD)~$(git log -1 --format=%h)" >> $GITHUB_ENV
+
+    - name: Download previous artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: geary-src-rpm
+        path: build/
+
+    - name: Check if source RPM file exists
+      run: |
+        if test -f "build/geary-${{ env.LATEST_GEARY_VERSION }}-1.fc38.src.rpm"; then
+          echo "Source RPM file already exists, skipping build"
+          exit 0
+        fi
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install podman
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y podman
+
+    - name: Build SRPM package
+      run: |
+        cd $GITHUB_WORKSPACE && bash build.sh
+
+    - name: Upload SRPM package
+      uses: actions/upload-artifact@v2
+      with:
+        name: geary-src-rpm
+        path: $GITHUB_WORKSPACE/build/geary-*.src.rpm
