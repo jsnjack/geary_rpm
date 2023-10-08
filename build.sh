@@ -3,6 +3,8 @@
 # Ensure safe execution
 set -euo pipefail
 
+MAJOR_VERSION=44
+
 echo "Building the project"
 echo "===================="
 
@@ -10,7 +12,7 @@ echo "Cloning the repository..."
 rm -rf build
 mkdir -p build/rpms
 git clone https://gitlab.gnome.org/GNOME/geary.git build/geary
-VERSION=44.$(cd build/geary && git rev-list --count HEAD)~$(cd build/geary && git log -1 --format=%h)
+VERSION=${MAJOR_VERSION}.$(cd build/geary && git rev-list --count HEAD)~$(cd build/geary && git log -1 --format=%h)
 echo "Version: $VERSION"
 
 echo "Rendering spec file..."
