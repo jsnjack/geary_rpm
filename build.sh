@@ -33,7 +33,8 @@ echo "Building rpm..."
 podman run \
     --name geary-builder \
     -d --rm \
-    -v ${PWD}/build/copr:/root/.config/copr \
+    -v $(pwd)/build/copr:/root/.config/copr \
+    -v $(pwd)/build/geary-${VERSION}.zip:/root/rpmbuild/SOURCES/geary-${VERSION}.zip \
     localhost/geary-build-image:latest \
     bash -c "tail -f /dev/null"
 podman exec geary-builder bash -c "rpmbuild -bs /root/rpmbuild/SPECS/geary.spec"
