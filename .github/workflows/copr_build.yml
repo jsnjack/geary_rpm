@@ -20,5 +20,7 @@ jobs:
         sudo apt-get install -y podman
 
     - name: Build SRPM package
-      run: |
-        cd $GITHUB_WORKSPACE && bash build.sh
+      env:
+        COPR_LOGIN: ${{ secrets.COPR_LOGIN }}
+        COPR_TOKEN: ${{ secrets.COPR_TOKEN }}
+      run: bash build.sh
