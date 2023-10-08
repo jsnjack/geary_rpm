@@ -19,6 +19,7 @@ jobs:
 
     - name: Download previous artifact
       uses: actions/download-artifact@v2
+      continue-on-error: true
       with:
         name: geary-src-rpm
         path: build/
