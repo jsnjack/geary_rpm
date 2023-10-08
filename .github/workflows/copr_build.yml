@@ -44,7 +44,7 @@ jobs:
         cd $GITHUB_WORKSPACE && bash build.sh
 
     - name: List folder structure
-      run: cd $GITHUB_WORKSPACE && tree
+      run: tree
 
     - name: Upload SRPM package
       uses: actions/upload-artifact@v2
