@@ -38,5 +38,5 @@ podman run \
     localhost/geary-build-image:latest \
     bash -c "tail -f /dev/null"
 podman exec geary-builder bash -c "rpmbuild -bs /root/rpmbuild/SPECS/geary.spec"
-podman exec geary-builder bash -c "find -name geary-*.src.rpm /root/rpmbuild/SRPMS/ | xargs -t -I % copr-cli build geary %"
+podman exec geary-builder bash -c "find -name \"geary-*.src.rpm\" /root/rpmbuild/SRPMS/ | xargs -t -I % copr-cli build geary %"
 podman kill --signal=SIGKILL geary-builder
