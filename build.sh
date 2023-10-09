@@ -15,6 +15,12 @@ git clone https://gitlab.gnome.org/GNOME/geary.git build/geary
 VERSION=${MAJOR_VERSION}.$(cd build/geary && git rev-list --count HEAD)~$(cd build/geary && git log -1 --format=%h)
 echo "Version: $VERSION"
 
+echo "Checking the latest version in copr..."
+if  echo "$(copr-cli list-packages jsnjack/geary --with-latest-build --output-format text-row)" | grep -q "${VERSION}"; then
+    echo "Version ${VERSION} already exists in copr. Skipping the build."
+    exit 0
+fi
+
 echo "Rendering spec file..."
 GEARY_VERSION=${VERSION} envsubst < geary.spec.tpl > build/geary.spec
 
