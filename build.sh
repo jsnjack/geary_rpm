@@ -37,7 +37,13 @@ podman run \
     -v $(pwd)/build/geary-${VERSION}.zip:/root/rpmbuild/SOURCES/geary-${VERSION}.zip \
     localhost/geary-build-image:latest \
     bash -c "tail -f /dev/null"
-test $(podman exec geary-builder bash -c "copr-cli list-packages jsnjack/geary --with-latest-build --output-format json | jq .[0].latest_build.source_package.version") = "\"${VERSION}\"" && echo "Package already exists" && exit 0
+COPR_LAST_BUILD=$(podman exec geary-builder bash -c "copr-cli list-packages jsnjack/geary --with-latest-build --output-format json | jq .[0].latest_build.source_package.version")
+echo "COPR_LAST_BUILD: $COPR_LAST_BUILD"
+if [[ "$COPR_LAST_BUILD" == "\"${VERSION}-1\"" ]]; then
+    echo "COPR_LAST_BUILD is the same as the current build, skipping..."
+    podman kill --signal=SIGKILL geary-builder
+    exit 0
+fi
 podman exec geary-builder bash -c "rpmbuild -bs /root/rpmbuild/SPECS/geary.spec"
 podman exec geary-builder bash -c "ls /root/rpmbuild/SRPMS/geary-*.src.rpm | xargs -t -I % copr-cli build geary %"
 podman kill --signal=SIGKILL geary-builder
