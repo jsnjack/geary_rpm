@@ -15,12 +15,6 @@ git clone https://gitlab.gnome.org/GNOME/geary.git build/geary
 VERSION=${MAJOR_VERSION}.$(cd build/geary && git rev-list --count HEAD)~$(cd build/geary && git log -1 --format=%h)
 echo "Version: $VERSION"
 
-echo "Checking the latest version in copr..."
-if  echo "$(copr-cli list-packages jsnjack/geary --with-latest-build --output-format text-row)" | grep -q "${VERSION}"; then
-    echo "Version ${VERSION} already exists in copr. Skipping the build."
-    exit 0
-fi
-
 echo "Rendering spec file..."
 GEARY_VERSION=${VERSION} envsubst < geary.spec.tpl > build/geary.spec
 
@@ -43,6 +37,7 @@ podman run \
     -v $(pwd)/build/geary-${VERSION}.zip:/root/rpmbuild/SOURCES/geary-${VERSION}.zip \
     localhost/geary-build-image:latest \
     bash -c "tail -f /dev/null"
+test $(podman exec geary-builder bash -c "copr-cli list-packages jsnjack/geary --with-latest-build --output-format json | jq .[0].latest_build.source_package.version") = "\"${VERSION}\"" && echo "Package already exists" && exit 0
 podman exec geary-builder bash -c "rpmbuild -bs /root/rpmbuild/SPECS/geary.spec"
 podman exec geary-builder bash -c "ls /root/rpmbuild/SRPMS/geary-*.src.rpm | xargs -t -I % copr-cli build geary %"
 podman kill --signal=SIGKILL geary-builder
