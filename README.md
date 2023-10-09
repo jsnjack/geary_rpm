@@ -4,8 +4,10 @@ geary rpm builder
 This repository contains a script to build a rpm package for geary. It is based
 on the spec file from the [official fedora package](https://src.fedoraproject.org/rpms/geary).
 
-The script runs every week to provide a user with the latest geary version. The
+The script runs every day to provide a user with the latest geary version. The
 version number has the following format `<main_version>.<numbr_of_commits>~<commit_id>`-1.
+
+The packages are available in [COPR repository](https://copr.fedorainfracloud.org/coprs/jsnjack/geary/).
 
 ## Installation
 ```
