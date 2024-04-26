@@ -1,5 +1,4 @@
-FROM fedora:38
-# Sync distro name with build.sh
+FROM fedora:40
 
 RUN dnf install rpm-build copr-cli jq -y
 
