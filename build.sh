@@ -3,7 +3,7 @@
 # Ensure safe execution
 set -euo pipefail
 
-MAJOR_VERSION=44
+MAJOR_VERSION=46
 
 echo "Building the project"
 echo "===================="
